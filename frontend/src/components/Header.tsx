@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Activity, 
   Search,
@@ -9,7 +9,9 @@ import {
   AlertTriangle,
   ChevronDown,
   User,
-  ShieldCheck
+  ShieldCheck,
+  Home,
+  LayoutDashboard
 } from 'lucide-react';
 import { PlatformType, TimeRange } from '../types';
 
@@ -25,6 +27,8 @@ interface HeaderProps {
   onPlatformChange?: (p: string) => void;
   timeRange?: string;
   onTimeRangeChange?: (t: string) => void;
+  activeTab?: string;
+  onSelectTab?: (tab: any) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -39,6 +43,8 @@ export const Header: React.FC<HeaderProps> = ({
   onPlatformChange,
   timeRange = '24h',
   onTimeRangeChange,
+  activeTab = 'landing',
+  onSelectTab,
 }) => {
   const [timeDropdownOpen, setTimeDropdownOpen] = useState(false);
   const [activePlatform, setActivePlatform] = useState(selectedPlatform);
@@ -68,9 +74,12 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="sticky top-0 z-40 w-full border-b border-white/[0.08] bg-[#070b14]/95 backdrop-blur-xl px-3 lg:px-6 py-2 transition-all">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        {/* Brand & Logo Matching Slide 5 */}
-        <div className="flex items-center gap-3">
-          <div className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500/25 via-blue-600/15 to-purple-600/20 border border-cyan-500/40 shadow-[0_0_15px_rgba(6,182,212,0.25)]">
+        {/* Brand & Logo */}
+        <div 
+          onClick={() => onSelectTab && onSelectTab('landing')}
+          className="flex items-center gap-3 cursor-pointer group"
+        >
+          <div className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500/25 via-blue-600/15 to-purple-600/20 border border-cyan-500/40 shadow-[0_0_15px_rgba(6,182,212,0.25)] group-hover:scale-105 transition-transform">
             <Radio className="w-5 h-5 text-cyan-300 animate-pulse" />
             <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -80,7 +89,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <div>
             <div className="flex items-center gap-1.5">
-              <h1 className="text-base lg:text-lg font-bold tracking-tight text-white font-display">
+              <h1 className="text-base lg:text-lg font-bold tracking-tight text-white font-display group-hover:text-cyan-300 transition-colors">
                 SocialMind AI
               </h1>
               <span className="px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider rounded bg-cyan-950/80 text-cyan-300 border border-cyan-800/60 font-mono">
@@ -93,13 +102,39 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
+        {/* View Mode Toggle: Landing Page vs Command Dashboard */}
+        <div className="flex items-center bg-black/40 p-1 rounded-xl border border-white/[0.08] text-xs font-mono">
+          <button
+            onClick={() => onSelectTab && onSelectTab('landing')}
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg transition-all ${
+              activeTab === 'landing'
+                ? 'bg-gradient-to-r from-purple-600/40 to-blue-600/30 text-purple-200 border border-purple-500/40 shadow-sm font-bold'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Home className="w-3.5 h-3.5" />
+            <span>Landing Page</span>
+          </button>
+          <button
+            onClick={() => onSelectTab && onSelectTab('overview')}
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg transition-all ${
+              activeTab === 'overview'
+                ? 'bg-gradient-to-r from-cyan-600/40 to-blue-600/30 text-cyan-200 border border-cyan-500/40 shadow-sm font-bold'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <LayoutDashboard className="w-3.5 h-3.5" />
+            <span>Dashboard</span>
+          </button>
+        </div>
+
         {/* Global Search Bar (Matching Slide 5) */}
-        <div className="flex-1 max-w-md hidden md:block">
+        <div className="flex-1 max-w-sm hidden lg:block">
           <div className="relative">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
             <input
               type="text"
-              placeholder="Search for a topic, keyword or hashtag..."
+              placeholder="Search for topic, keyword or hashtag..."
               value={searchQuery}
               onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
               className="w-full bg-black/40 text-slate-200 pl-9 pr-4 py-1.5 rounded-lg border border-white/[0.1] text-xs focus:outline-none focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/40 placeholder-slate-500 font-sans"
@@ -108,27 +143,27 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Platform Selector Buttons (Matching Slide 5) */}
-        <div className="hidden xl:flex items-center gap-1.5 p-1 bg-black/40 rounded-lg border border-white/[0.06] text-xs">
+        <div className="hidden 2xl:flex items-center gap-1.5 p-1 bg-black/40 rounded-lg border border-white/[0.06] text-xs">
           {platforms.map((p) => {
             const isSelected = activePlatform === p.id;
             return (
               <button
                 key={p.id}
                 onClick={() => handlePlatformClick(p.id)}
-                className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-mono transition-all ${
+                className={`flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-mono transition-all ${
                   isSelected
                     ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-semibold shadow-[0_0_8px_rgba(6,182,212,0.2)]'
                     : `text-slate-400 ${p.color} hover:bg-white/[0.04]`
                 }`}
               >
                 <span>{p.icon}</span>
-                <span className="hidden 2xl:inline">{p.label}</span>
+                <span>{p.label}</span>
               </button>
             );
           })}
         </div>
 
-        {/* Right Tools: Time Range, Simulation, Analyst Profile */}
+        {/* Right Tools: Time Range, Analyst Profile */}
         <div className="flex items-center gap-2.5">
           {/* Time Range Dropdown */}
           <div className="relative">

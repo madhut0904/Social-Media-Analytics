@@ -13,6 +13,7 @@ import {
 import { api } from './services/api';
 import { Header } from './components/Header';
 import { Sidebar, TabType } from './components/Sidebar';
+import { LandingPage } from './components/LandingPage';
 import { SocialMindDashboard } from './components/SocialMindDashboard';
 import { NetworkGraph } from './components/NetworkGraph';
 import { SentimentRadar } from './components/SentimentRadar';
@@ -29,10 +30,11 @@ import { FileText, Settings, ShieldCheck } from 'lucide-react';
 
 export const App: React.FC = () => {
   const getInitialTab = (): TabType => {
-    if (typeof window !== 'undefined' && window.location.pathname.includes('timeline')) {
-      return 'timeline';
+    if (typeof window !== 'undefined') {
+      if (window.location.pathname.includes('timeline')) return 'timeline';
+      if (window.location.pathname.includes('dashboard')) return 'overview';
     }
-    return 'overview';
+    return 'landing';
   };
 
   const [activeTab, setActiveTab] = useState<TabType>(getInitialTab);
@@ -58,7 +60,7 @@ export const App: React.FC = () => {
   const handleTabSelect = (tab: TabType) => {
     setActiveTab(tab);
     if (typeof window !== 'undefined') {
-      const url = tab === 'timeline' ? '/timeline' : '/';
+      const url = tab === 'timeline' ? '/timeline' : tab === 'overview' ? '/dashboard' : '/';
       window.history.pushState(null, '', url);
     }
   };
@@ -67,8 +69,10 @@ export const App: React.FC = () => {
     const handlePopState = () => {
       if (window.location.pathname.includes('timeline')) {
         setActiveTab('timeline');
-      } else {
+      } else if (window.location.pathname.includes('dashboard')) {
         setActiveTab('overview');
+      } else {
+        setActiveTab('landing');
       }
     };
     window.addEventListener('popstate', handlePopState);
@@ -165,6 +169,8 @@ export const App: React.FC = () => {
         onPlatformChange={(p) => setPlatform(p as PlatformType)}
         timeRange={range}
         onTimeRangeChange={(r) => setRange(r as TimeRange)}
+        activeTab={activeTab}
+        onSelectTab={handleTabSelect}
       />
 
       <div className="flex flex-1 relative">
@@ -181,6 +187,16 @@ export const App: React.FC = () => {
             <LoadingSkeleton />
           ) : (
             <>
+              {/* Tab: Animated Project Landing Page & Architecture Showcase */}
+              {activeTab === 'landing' && (
+                <LandingPage
+                  onLaunchDashboard={() => handleTabSelect('overview')}
+                  onOpenTimeMachine={() => handleTabSelect('timeline')}
+                  onOpenNLPWorkbench={() => handleTabSelect('nlp')}
+                  onSelectTab={handleTabSelect}
+                />
+              )}
+
               {/* Primary Dashboard View (Matching Slide 5) */}
               {activeTab === 'overview' && (
                 <SocialMindDashboard

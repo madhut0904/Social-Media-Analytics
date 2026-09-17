@@ -1,5 +1,6 @@
 import React from 'react';
 import { 
+  Home,
   LayoutDashboard, 
   Radio, 
   BarChart3, 
@@ -11,10 +12,12 @@ import {
   ShieldCheck, 
   ChevronRight,
   History,
-  Lock
+  Lock,
+  Sparkles
 } from 'lucide-react';
 
 export type TabType = 
+  | 'landing'
   | 'overview' 
   | 'timeline'
   | 'sentiment'
@@ -38,15 +41,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onSelectTab,
   criticalAlerts,
 }) => {
-  // Navigation matching Slide 5 exactly
+  // Navigation including Landing & Slide 5 modules
   const navItems = [
-    { id: 'overview' as TabType, label: 'Dashboard', icon: LayoutDashboard, badge: null },
+    { id: 'landing' as TabType, label: 'Home / Overview', icon: Home, badge: 'Overview', badgeColor: 'purple' },
+    { id: 'overview' as TabType, label: 'Dashboard', icon: LayoutDashboard, badge: 'Slide 5', badgeColor: 'cyan' },
     { id: 'feed' as TabType, label: 'Live Feed', icon: Radio, badge: 'Live', badgeColor: 'emerald' },
     { id: 'sentiment' as TabType, label: 'Sentiment Analysis', icon: BarChart3, badge: null },
     { id: 'demographics' as TabType, label: 'Demographics', icon: Users, badge: null },
     { id: 'trends' as TabType, label: 'Trends & Topics', icon: TrendingUp, badge: null },
     { id: 'network' as TabType, label: 'Network Analysis', icon: Network, badge: null },
     { id: 'timeline' as TabType, label: 'Time Machine', icon: History, badge: 'Signature', badgeColor: 'cyan' },
+    { id: 'nlp' as TabType, label: 'NLP Inference Lab', icon: Sparkles, badge: 'ML' },
     { id: 'reports' as TabType, label: 'Reports', icon: FileText, badge: null },
     { id: 'settings' as TabType, label: 'Settings', icon: Settings, badge: null },
   ];
@@ -56,7 +61,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Navigation section */}
       <div className="space-y-1">
         <div className="px-3 py-2 text-[10px] font-mono tracking-widest text-slate-500 uppercase font-semibold">
-          Main Navigation
+          Command Modules
         </div>
 
         {navItems.map((item) => {
@@ -87,6 +92,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     className={`px-1.5 py-0.5 text-[9px] font-mono rounded ${
                       item.badgeColor === 'emerald'
                         ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
+                        : item.badgeColor === 'purple'
+                        ? 'bg-purple-500/15 text-purple-300 border border-purple-500/30'
                         : 'bg-cyan-500/10 text-cyan-300 border border-cyan-500/20'
                     }`}
                   >
