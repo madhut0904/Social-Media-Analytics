@@ -153,6 +153,7 @@ export const App: React.FC = () => {
   }, [isSimulating]);
 
   const criticalCount = alertsData?.critical_count || 1;
+  const isLandingView = activeTab === 'landing';
 
   return (
     <div className="min-h-screen tactical-grid-bg text-slate-100 flex flex-col font-sans">
@@ -174,15 +175,17 @@ export const App: React.FC = () => {
       />
 
       <div className="flex flex-1 relative">
-        {/* Left Navigation Sidebar */}
-        <Sidebar
-          activeTab={activeTab}
-          onSelectTab={handleTabSelect}
-          criticalAlerts={criticalCount}
-        />
+        {/* Left Navigation Sidebar (Shown on Dashboard and detailed tabs) */}
+        {!isLandingView && (
+          <Sidebar
+            activeTab={activeTab}
+            onSelectTab={handleTabSelect}
+            criticalAlerts={criticalCount}
+          />
+        )}
 
-        {/* Main Dashboard Command Canvas */}
-        <main className="flex-1 p-3 lg:p-5 max-w-[1680px] mx-auto w-full z-10">
+        {/* Main Command Canvas */}
+        <main className={`flex-1 p-3 sm:p-5 lg:p-6 w-full z-10 ${isLandingView ? 'max-w-7xl mx-auto' : 'max-w-[1680px] mx-auto'}`}>
           {isLoading && !summary ? (
             <LoadingSkeleton />
           ) : (
