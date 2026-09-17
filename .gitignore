@@ -5,6 +5,8 @@ dist-ssr/
 *.local
 .npm
 .eslintcache
+.vite/
+frontend/.vite/
 
 # Logs
 npm-debug.log*
