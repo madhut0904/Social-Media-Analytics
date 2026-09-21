@@ -32,9 +32,10 @@ export const App: React.FC = () => {
   const getInitialTab = (): TabType => {
     if (typeof window !== 'undefined') {
       if (window.location.pathname.includes('timeline')) return 'timeline';
+      if (window.location.pathname.includes('landing')) return 'landing';
       if (window.location.pathname.includes('dashboard')) return 'overview';
     }
-    return 'landing';
+    return 'overview';
   };
 
   const [activeTab, setActiveTab] = useState<TabType>(getInitialTab);
